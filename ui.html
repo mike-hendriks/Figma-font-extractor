@@ -1,0 +1,112 @@
+<h2>Font style extractor</h2>
+
+<div>
+  <textarea name="output" id="output" cols="70" rows="20"></textarea>
+</div>
+
+<div>
+  <button id="create">Create</button>
+  <button id="cancel">Cancel</button>
+</div>
+
+<script>
+  let textStyles = [];
+  
+  const formatFontArray = (fonts) => {
+    let formattedFonts = {};
+    
+    fonts.map((font) => {
+      let fontName = font.name.split('/');
+      fontName[1] = fontName[1].toLowerCase().replace(/\s/g, '-');
+
+      const screenSize = parseInt(fontName[0]) < 800 ? 'small' : 'large';
+
+      if (formattedFonts[fontName[1]]) {
+        formattedFonts[fontName[1]][screenSize] = {
+            name: fontName[1],
+            size: font.fontsize,
+            letterSpacing: font.letterSpacing.unit === 'PERCENT' ? font.letterSpacing.value+'%' : 'TODO: Fill',
+            lineHeight: font.lineHeight.unit === 'PERCENT' ? font.lineHeight.value+'%' : 'TODO: Fill',
+            fontFamily: font.fontName.family,
+            fontStyle: font.fontName.style,
+            textDecoration: font.textDecoration,
+            casing: font.textCase,
+        };
+      } else {
+        formattedFonts[fontName[1]] = {
+          [screenSize]: {
+            name: fontName[1],
+            size: font.fontsize,
+            letterSpacing: font.letterSpacing.unit === 'PERCENT' ? font.letterSpacing.value+'%' : 'TODO: Fill',
+            lineHeight: font.lineHeight.unit === 'PERCENT' ? font.lineHeight.value+'%' : 'TODO: Fill',
+            fontFamily: font.fontName.family,
+            fontStyle: font.fontName.style,
+            textDecoration: font.textDecoration,
+            casing: font.textCase,
+          }
+        };
+      }
+    });
+
+    return createSCSSFontStyles(formattedFonts);
+  }
+
+  const createSCSSFontStyles = (fonts) => {
+    let formattedFonts = '// Here you go sir';
+    
+    Object.keys(fonts).map((fontName, index) => {
+      formattedFonts += fillValues(fonts[fontName]);
+    });
+
+    return formattedFonts;
+  }
+
+  const fillValues = (font) => {
+    return `
+      @mixin ${font.large.name} {
+        font-family: ${font.large.fontFamily};
+        
+        @include mq($until: medium) {
+          font-size: rem(${font?.small?.size || font.large.size}px);
+          letter-spacing: ${font?.small?.letterSpacing || font.large.letterSpacing};
+          line-height: ${font?.small?.lineHeight || font.large.lineHeight};
+          font-weight: ${font?.small?.fontStyle || font.large.fontStyle};
+          ${font?.small?.textDecoration && font?.small?.textDecoration !== 'NONE' ? `text-decoration: ${font?.small?.textDecoration};` : ''}
+          ${font?.small?.casing && font?.small?.casing !== 'ORIGINAL' ? `text-transform: ${font?.small?.casing};` : ''}
+        }
+        
+        @include mq(medium) {
+          font-size: vw-bp(${font.large.size}, xl);
+          letter-spacing: ${font.large.letterSpacing};
+          line-height: ${font.large.lineHeight};
+          font-weight: ${font.large.fontStyle};
+          ${font?.large?.textDecoration !== 'NONE' ? `text-decoration: ${font?.large?.textDecoration};` : ''}
+          ${font?.large?.casing !== 'ORIGINAL' ? `text-transform: ${font?.large?.casing};` : ''}
+        }
+      }
+
+      .${font.large.name} {
+        @include ${font.large.name};
+      }
+    `;
+  }
+  
+  window.onmessage = async (event) => {
+    const message = event?.data?.pluginMessage?.pluginMessage
+
+    switch (message.type) {
+      case 'textStyles':
+        const fonts = formatFontArray(message?.data);
+        document.getElementById('output').value = fonts;
+        break;
+    
+      default:
+        break;
+    }
+  }
+
+document.getElementById('create').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'createFontStyles' } }, '*')
+}
+
+</script>

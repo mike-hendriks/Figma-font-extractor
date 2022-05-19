@@ -1,0 +1,10 @@
+{
+  "name": "Figma font extractor",
+  "id": "1109026870833009927",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": [
+    "figma"
+  ],
+  "ui": "ui.html"
+}

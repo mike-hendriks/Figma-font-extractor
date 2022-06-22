@@ -19,7 +19,13 @@
       let fontName = font.name.split('/');
       fontName[1] = fontName[1].toLowerCase().replace(/\s/g, '-');
 
-      const screenSize = parseInt(fontName[0]) < 800 ? 'small' : 'large';
+      let screenSize;
+
+      if (fontName[0].toLowerCase() === 'desktop') {screenSize = 'large'}
+      else if (fontName[0].toLowerCase() === 'mobile') {screenSize = 'small'}
+      else {screenSize = parseInt(fontName[0]) < 800 ? 'small' : 'large'}
+
+      console.log(screenSize);
 
       if (formattedFonts[fontName[1]]) {
         formattedFonts[fontName[1]][screenSize] = {

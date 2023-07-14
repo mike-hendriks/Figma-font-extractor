@@ -9,10 +9,10 @@ figma.ui.resize(600, 450);
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-figma.ui.onmessage = msg => {
+figma.ui.onmessage = (msg) => {
     // One way of distinguishing between different types of messages sent from
     // your HTML page is to use an object with a "type" property like this.
-    if (msg.type === 'createFontStyles') {
+    if (msg.type === "createFontStyles") {
         // const nodes: SceneNode[] = [];
         // for (let i = 0; i < msg.count; i++) {
         //   const rect = figma.createRectangle();
@@ -26,23 +26,25 @@ figma.ui.onmessage = msg => {
         const textStyles = figma.getLocalTextStyles();
         const textObject = textStyles.map((style) => {
             return {
-                description: style.description,
-                fontName: Object.assign({}, style.fontName),
-                fontsize: style.fontSize,
-                id: style.id,
-                key: style.key,
-                letterSpacing: Object.assign({}, style.letterSpacing),
-                lineHeight: Object.assign({}, style.lineHeight),
-                name: style.name,
-                paragraphIndent: style.paragraphIndent,
-                paragraphSpacing: style.paragraphSpacing,
-                remote: style.remote,
-                textCase: style.textCase,
-                textDecoration: style.textDecoration,
-                type: style.type,
+                description: style === null || style === void 0 ? void 0 : style.description,
+                fontName: Object.assign({}, style === null || style === void 0 ? void 0 : style.fontName),
+                fontsize: style === null || style === void 0 ? void 0 : style.fontSize,
+                id: style === null || style === void 0 ? void 0 : style.id,
+                key: style === null || style === void 0 ? void 0 : style.key,
+                letterSpacing: Object.assign({}, style === null || style === void 0 ? void 0 : style.letterSpacing),
+                lineHeight: Object.assign({}, style === null || style === void 0 ? void 0 : style.lineHeight),
+                name: style === null || style === void 0 ? void 0 : style.name,
+                paragraphIndent: style === null || style === void 0 ? void 0 : style.paragraphIndent,
+                paragraphSpacing: style === null || style === void 0 ? void 0 : style.paragraphSpacing,
+                remote: style === null || style === void 0 ? void 0 : style.remote,
+                textCase: style === null || style === void 0 ? void 0 : style.textCase,
+                textDecoration: style === null || style === void 0 ? void 0 : style.textDecoration,
+                type: style === null || style === void 0 ? void 0 : style.type,
             };
         });
-        figma.ui.postMessage({ pluginMessage: { type: 'textStyles', data: textObject } });
+        figma.ui.postMessage({
+            pluginMessage: { type: "textStyles", data: textObject },
+        });
         // console.log(textObject);
     }
     // Make sure to close the plugin when you're done. Otherwise the plugin will

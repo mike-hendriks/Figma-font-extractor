@@ -9,14 +9,13 @@
 figma.showUI(__html__);
 figma.ui.resize(600, 450);
 
-
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-figma.ui.onmessage = msg => {
+figma.ui.onmessage = (msg) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === 'createFontStyles') {
+  if (msg.type === "createFontStyles") {
     // const nodes: SceneNode[] = [];
     // for (let i = 0; i < msg.count; i++) {
     //   const rect = figma.createRectangle();
@@ -32,28 +31,28 @@ figma.ui.onmessage = msg => {
 
     const textObject = textStyles.map((style) => {
       return {
-        description: style.description,
-        fontName: {...style.fontName},
-        fontsize: style.fontSize,
-        id: style.id,
-        key: style.key,
-        letterSpacing: {...style.letterSpacing},
-        lineHeight: {...style.lineHeight},
-        name: style.name,
-        paragraphIndent: style.paragraphIndent,
-        paragraphSpacing: style.paragraphSpacing,
-        remote: style.remote,
-        textCase: style.textCase,
-        textDecoration: style.textDecoration,
-        type: style.type,
-      }
-    })
-    
-    figma.ui.postMessage({ pluginMessage: { type: 'textStyles', data: textObject } });
+        description: style?.description,
+        fontName: { ...style?.fontName },
+        fontsize: style?.fontSize,
+        id: style?.id,
+        key: style?.key,
+        letterSpacing: { ...style?.letterSpacing },
+        lineHeight: { ...style?.lineHeight },
+        name: style?.name,
+        paragraphIndent: style?.paragraphIndent,
+        paragraphSpacing: style?.paragraphSpacing,
+        remote: style?.remote,
+        textCase: style?.textCase,
+        textDecoration: style?.textDecoration,
+        type: style?.type,
+      };
+    });
+
+    figma.ui.postMessage({
+      pluginMessage: { type: "textStyles", data: textObject },
+    });
     // console.log(textObject);
   }
-
-
 
   // Make sure to close the plugin when you're done. Otherwise the plugin will
   // keep running, which shows the cancel button at the bottom of the screen.

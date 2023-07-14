@@ -11,74 +11,102 @@
 
 <script>
   let textStyles = [];
-  
+
   const formatFontArray = (fonts) => {
     let formattedFonts = {};
-    
+
     fonts.map((font) => {
-      let fontName = font.name.split('/');
-      fontName[1] = fontName[1].toLowerCase().replace(/\s/g, '-');
+      let fontName = font?.name?.split("/");
+      fontName[1] = fontName[1].toLowerCase().replace(/\s/g, "-");
 
       let screenSize;
 
-      if (fontName[0].toLowerCase() === 'desktop') {screenSize = 'large'}
-      else if (fontName[0].toLowerCase() === 'mobile') {screenSize = 'small'}
-      else {screenSize = parseInt(fontName[0]) < 800 ? 'small' : 'large'}
+      if (fontName[0].toLowerCase() === "desktop") {
+        screenSize = "large";
+      } else if (fontName[0].toLowerCase() === "mobile") {
+        screenSize = "small";
+      } else {
+        screenSize = parseInt(fontName[0]) < 800 ? "small" : "large";
+      }
 
       console.log(screenSize);
 
       if (formattedFonts[fontName[1]]) {
         formattedFonts[fontName[1]][screenSize] = {
-            name: fontName[1],
-            size: font.fontsize,
-            letterSpacing: font.letterSpacing.unit === 'PERCENT' ? font.letterSpacing.value+'%' : 'TODO: Fill',
-            lineHeight: font.lineHeight.unit === 'PERCENT' ? font.lineHeight.value+'%' : 'TODO: Fill',
-            fontFamily: font.fontName.family,
-            fontStyle: font.fontName.style,
-            textDecoration: font.textDecoration,
-            casing: font.textCase,
+          name: fontName[1],
+          size: font.fontsize,
+          letterSpacing:
+            font.letterSpacing.unit === "PERCENT"
+              ? font.letterSpacing.value + "%"
+              : "TODO: Fill",
+          lineHeight:
+            font.lineHeight.unit === "PERCENT"
+              ? font.lineHeight.value + "%"
+              : "TODO: Fill",
+          fontFamily: font.fontName.family,
+          fontStyle: font.fontName.style,
+          textDecoration: font.textDecoration,
+          casing: font.textCase,
         };
       } else {
         formattedFonts[fontName[1]] = {
           [screenSize]: {
             name: fontName[1],
             size: font.fontsize,
-            letterSpacing: font.letterSpacing.unit === 'PERCENT' ? font.letterSpacing.value+'%' : 'TODO: Fill',
-            lineHeight: font.lineHeight.unit === 'PERCENT' ? font.lineHeight.value+'%' : 'TODO: Fill',
+            letterSpacing:
+              font.letterSpacing.unit === "PERCENT"
+                ? font.letterSpacing.value + "%"
+                : "TODO: Fill",
+            lineHeight:
+              font.lineHeight.unit === "PERCENT"
+                ? font.lineHeight.value + "%"
+                : "TODO: Fill",
             fontFamily: font.fontName.family,
             fontStyle: font.fontName.style,
             textDecoration: font.textDecoration,
             casing: font.textCase,
-          }
+          },
         };
       }
     });
 
     return createSCSSFontStyles(formattedFonts);
-  }
+  };
 
   const createSCSSFontStyles = (fonts) => {
-    let formattedFonts = '// Here you go sir';
-    
+    let formattedFonts = "// Font styles";
+
     Object.keys(fonts).map((fontName, index) => {
       formattedFonts += fillValues(fonts[fontName]);
     });
 
     return formattedFonts;
-  }
+  };
 
   const fillValues = (font) => {
+    console.log(font);
     return `
-      @mixin ${font.large.name} {
+      @mixin ${font?.large?.name} {
         font-family: ${font.large.fontFamily};
         
         @include mq($until: medium) {
           font-size: rem(${font?.small?.size || font.large.size}px);
-          letter-spacing: ${font?.small?.letterSpacing || font.large.letterSpacing};
+          letter-spacing: ${
+            font?.small?.letterSpacing || font.large.letterSpacing
+          };
           line-height: ${font?.small?.lineHeight || font.large.lineHeight};
           font-weight: ${font?.small?.fontStyle || font.large.fontStyle};
-          ${font?.small?.textDecoration && font?.small?.textDecoration !== 'NONE' ? `text-decoration: ${font?.small?.textDecoration};` : ''}
-          ${font?.small?.casing && font?.small?.casing !== 'ORIGINAL' ? `text-transform: ${font?.small?.casing};` : ''}
+          ${
+            font?.small?.textDecoration &&
+            font?.small?.textDecoration !== "NONE"
+              ? `text-decoration: ${font?.small?.textDecoration};`
+              : ""
+          }
+          ${
+            font?.small?.casing && font?.small?.casing !== "ORIGINAL"
+              ? `text-transform: ${font?.small?.casing};`
+              : ""
+          }
         }
         
         @include mq(medium) {
@@ -86,33 +114,40 @@
           letter-spacing: ${font.large.letterSpacing};
           line-height: ${font.large.lineHeight};
           font-weight: ${font.large.fontStyle};
-          ${font?.large?.textDecoration !== 'NONE' ? `text-decoration: ${font?.large?.textDecoration};` : ''}
-          ${font?.large?.casing !== 'ORIGINAL' ? `text-transform: ${font?.large?.casing};` : ''}
+          ${
+            font?.large?.textDecoration !== "NONE"
+              ? `text-decoration: ${font?.large?.textDecoration};`
+              : ""
+          }
+          ${
+            font?.large?.casing !== "ORIGINAL"
+              ? `text-transform: ${font?.large?.casing};`
+              : ""
+          }
         }
       }
 
-      .${font.large.name} {
-        @include ${font.large.name};
+      .${font?.large?.name} {
+        @include ${font?.large?.name};
       }
     `;
-  }
-  
+  };
+
   window.onmessage = async (event) => {
-    const message = event?.data?.pluginMessage?.pluginMessage
+    const message = event?.data?.pluginMessage?.pluginMessage;
 
     switch (message.type) {
-      case 'textStyles':
+      case "textStyles":
         const fonts = formatFontArray(message?.data);
-        document.getElementById('output').value = fonts;
+        document.getElementById("output").value = fonts;
         break;
-    
+
       default:
         break;
     }
-  }
+  };
 
-document.getElementById('create').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'createFontStyles' } }, '*')
-}
-
+  document.getElementById("create").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "createFontStyles" } }, "*");
+  };
 </script>

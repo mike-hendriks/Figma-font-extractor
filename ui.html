@@ -12,10 +12,30 @@
 <script>
   let textStyles = [];
 
+  const fontWeightToScssVar = (weight) => {
+    switch (weight) {
+      case "Thin":
+        return "$thin-weight";
+      case "Light":
+        return "$light-weight";
+      case "Regular":
+        return "$regular-weight";
+      case "Medium":
+        return "$medium-weight";
+      case "Bold":
+        return "$bold-weight";
+      case "Black":
+        return "$black-weight";
+      default:
+        return "$regular-weight";
+    }
+  };
+
   const formatFontArray = (fonts) => {
     let formattedFonts = {};
 
     fonts.map((font) => {
+      console.log(font);
       let fontName = font?.name?.split("/");
       fontName[1] = fontName[1].toLowerCase().replace(/\s/g, "-");
 
@@ -29,7 +49,7 @@
         screenSize = parseInt(fontName[0]) < 800 ? "small" : "large";
       }
 
-      console.log(screenSize);
+      // console.log(screenSize);
 
       if (formattedFonts[fontName[1]]) {
         formattedFonts[fontName[1]][screenSize] = {
@@ -84,20 +104,25 @@
   };
 
   const fillValues = (font) => {
-    console.log(font);
     return `
       @mixin ${font?.large?.name} {
         font-family: ${font.large.fontFamily};
         
         @include mq($until: medium) {
-          font-size: rem(${font?.small?.size || font.large.size}px);
-          letter-spacing: ${
+          font-size: vw-bp(${font?.small?.size || font.large.size}, small);
+          letter-spacing: ls-per-to-em(${
             font?.small?.letterSpacing || font.large.letterSpacing
+          });
+          line-height: ${
+            Math.round(parseFloat(font?.small?.lineHeight)) ||
+            Math.round(parseFloat(font.large.lineHeight))
+          }%;
+          font-weight: ${
+            fontWeightToScssVar(font?.small?.fontStyle) ||
+            fontWeightToScssVar(font.large.fontStyle)
           };
-          line-height: ${font?.small?.lineHeight || font.large.lineHeight};
-          font-weight: ${font?.small?.fontStyle || font.large.fontStyle};
           ${
-            font?.small?.textDecoration &&
+            // font?.small?.textDecoration &&
             font?.small?.textDecoration !== "NONE"
               ? `text-decoration: ${font?.small?.textDecoration};`
               : ""
@@ -110,10 +135,10 @@
         }
         
         @include mq(medium) {
-          font-size: vw-bp(${font.large.size}, xl);
-          letter-spacing: ${font.large.letterSpacing};
-          line-height: ${font.large.lineHeight};
-          font-weight: ${font.large.fontStyle};
+          font-size: vw-bp(${font.large.size}, large);
+          letter-spacing: ls-per-to-em(${font.large.letterSpacing});
+          line-height: ${Math.round(parseFloat(font.large.lineHeight))}%;
+          font-weight: ${fontWeightToScssVar(font.large.fontStyle)};
           ${
             font?.large?.textDecoration !== "NONE"
               ? `text-decoration: ${font?.large?.textDecoration};`

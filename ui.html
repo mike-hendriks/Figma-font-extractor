@@ -122,7 +122,7 @@
             fontWeightToScssVar(font.large.fontStyle)
           };
           ${
-            // font?.small?.textDecoration &&
+            font?.small?.textDecoration &&
             font?.small?.textDecoration !== "NONE"
               ? `text-decoration: ${font?.small?.textDecoration};`
               : ""
